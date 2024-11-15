@@ -61,6 +61,7 @@ export class ESPLoader extends EventTarget {
   debug = false;
   IS_STUB = false;
   connected = true;
+  noReset = false;
   flashSize: string | null = null;
 
   __inputBuffer?: number[];
@@ -78,8 +79,18 @@ export class ESPLoader extends EventTarget {
     return this._parent ? this._parent._inputBuffer : this.__inputBuffer!;
   }
 
+  async setNoReset(noReset: boolean) {
+    const noResetCheckbox = document.getElementById("noReset");
+    if (noResetCheckbox) {
+      (noResetCheckbox as HTMLInputElement).checked = noReset;
+    }
+    this.noReset = noReset;
+  }
+
   async initialize() {
-    await this.hardReset(true);
+    if (!this.noReset) {
+      await this.hardReset(true);
+    }
 
     if (!this._parent) {
       this.__inputBuffer = [];
